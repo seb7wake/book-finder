@@ -1,0 +1,39 @@
+.title {
+  font-size: 45px;
+  margin-top: 17%;
+}
+header {
+  text-align: center;
+}
+.subtitle {
+  margin-bottom: 2%;
+  font-size: 18px;
+  color: #a0a0a0;
+}
+
+.App {
+  font-family: 'Roboto', sans-serif;
+  background-color: '#E8E8E8';
+}
+
+body {
+  background-color: #f0f0f0;
+}
+
+.query-fields {
+  justify-items: center;
+  align-items: center;
+  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+}
+
+input {
+  margin-bottom: 2%;
+  font-size: 20px;
+}
+
+#search-bar {
+  float: left;
+  width: 78%;
+}
