@@ -5,26 +5,28 @@ import Card from '../components/Card'
 import '../styles.css'
 
 const Home = () => {
+  const [hasSearched, setHasSearched] = React.useState(false)
   const [books, setBooks] = React.useState([])
   const [start, setStart] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
   const [order, setOrder] = React.useState('relevance')
-  let search = ''
+  const [search, setSearch] = React.useState('')
   // https://www.googleapis.com/books/v1/volumes?q=inauthor:daniel+keyes+intitle:flowers+subject:&orderBy=newest&printType=books&startIndex=0
 
-  React.useEffect(() => {
-    findBooks()
-  }, [])
+  // React.useEffect(() => {
+  //   findBooks()
+  // }, [])
 
   const findBooks = async () => {
     console.log('here')
     setLoading(true)
-    search = document.getElementById('search-bar').value
-      ? document.getElementById('title').value
+    let newSearch = document.getElementById('search-bar').value
+      ? document.getElementById('search-bar').value
       : ''
+    setSearch(newSearch)
     let url =
       'https://www.googleapis.com/books/v1/volumes?q=' +
-      search.replace(' ', '+') +
+      newSearch.replace(' ', '+') +
       '&orderBy=' +
       order +
       '&printType=books' +
@@ -39,6 +41,7 @@ const Home = () => {
     }
     console.log(data.items)
     setLoading(false)
+    setHasSearched(true)
   }
 
   const loadMoreBooks = async () => {
@@ -68,15 +71,22 @@ const Home = () => {
         <div className="title">Book Finder</div>
         <div className="subtitle">Created using the Google Books API</div>
       </header>
-      <div className="query-fields">
-        <input
-          id="search-bar"
-          placeholder="Search using Titles, Authors, and more"
-          type="text"
-        />
-        <input type="button" onClick={findBooks} value="Search Library" />
+      <div className="form">
+        <div className="query-fields">
+          <input
+            id="search-bar"
+            placeholder="Search using book titles, authors, and more..."
+            type="text"
+          />
+          <input
+            type="button"
+            id="search-btn"
+            onClick={findBooks}
+            value="Search"
+          />
+        </div>
       </div>
-      {books.length > 0 ? (
+      {books.length > 0 && hasSearched ? (
         <div className={'container'}>
           <InfiniteScroll
             style={{
@@ -116,10 +126,12 @@ const Home = () => {
             )}
           </InfiniteScroll>
         </div>
-      ) : (
+      ) : hasSearched ? (
         <div style={{ textAlign: 'center', marginTop: '5%', fontSize: '20px' }}>
           There are no books that match your search!!
         </div>
+      ) : (
+        <div></div>
       )}
     </div>
   )
