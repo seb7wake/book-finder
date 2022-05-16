@@ -124,5 +124,4 @@ const Home = () => {
     </div>
   )
 }
-// AIzaSyCiIlPznTKezMBJ_8vZLi2N_Uaa_Vo2X-8
 export default Home
