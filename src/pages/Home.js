@@ -9,7 +9,8 @@ const Home = () => {
   const [books, setBooks] = React.useState([])
   const [start, setStart] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
-  const [order, setOrder] = React.useState('relevance')
+  const [order, setOrder] = React.useState('Relevance')
+  const [filter, setFilter] = React.useState('ebooks')
   const [search, setSearch] = React.useState('')
   // https://www.googleapis.com/books/v1/volumes?q=inauthor:daniel+keyes+intitle:flowers+subject:&orderBy=newest&printType=books&startIndex=0
 
@@ -24,13 +25,23 @@ const Home = () => {
       ? document.getElementById('search-bar').value
       : ''
     setSearch(newSearch)
+    let newOrder = document.getElementById('sort').value
+      ? document.getElementById('sort').value
+      : order
+    setOrder(newOrder)
+    let newFilter = document.getElementById('filter').value
+      ? document.getElementById('filter').value
+      : filter
+    setFilter(newFilter)
     let url =
       'https://www.googleapis.com/books/v1/volumes?q=' +
       newSearch.replace(' ', '+') +
       '&orderBy=' +
-      order +
+      newOrder +
       '&printType=books' +
-      '&startIndex=0'
+      '&startIndex=0' +
+      '&filter=' +
+      newFilter
     console.log(url)
     const res = await fetch(url)
     const data = await res.json()
@@ -54,7 +65,9 @@ const Home = () => {
       order +
       '&printType=books' +
       '&startIndex=' +
-      newIndex
+      newIndex +
+      '&filter=' +
+      filter
     console.log(newUrl)
     setStart(newIndex)
     const res = await fetch(newUrl)
@@ -65,29 +78,54 @@ const Home = () => {
     setBooks(newBooks)
   }
 
-  return (
-    <div>
-      <header>
-        <div className="title">Book Finder</div>
-        <div className="subtitle">Created using the Google Books API</div>
-      </header>
-      <div className="form">
-        <div className="query-fields">
-          <input
-            id="search-bar"
-            placeholder="Search using book titles, authors, and more..."
-            type="text"
-          />
-          <input
-            type="button"
-            id="search-btn"
-            onClick={findBooks}
-            value="Search"
-          />
+  const update = () => {
+    if (books.length > 0) {
+      findBooks()
+    }
+  }
+
+  const headerAndSearch = () => {
+    return (
+      <div>
+        <header>
+          <div className="title">Book Finder</div>
+          <div className="subtitle">Created using the Google Books API</div>
+        </header>
+        <div className="form">
+          <div className="query-fields">
+            <input
+              id="search-bar"
+              placeholder="Search using book titles, authors, and more..."
+              type="text"
+            />
+            <input
+              type="button"
+              id="search-btn"
+              onClick={findBooks}
+              value="Search"
+            />
+            <br />
+            <div className="filters">
+              <select id="sort" onChange={update}>
+                <option value="relevance"> Relevance </option>
+                <option value="newest"> Newest</option>
+              </select>
+              <select id="filter" onChange={update}>
+                <option value="ebooks"> All ebooks </option>
+                <option value="free-ebooks"> Free ebooks</option>
+                <option value="paid-ebooks"> Paid ebooks</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
+    )
+  }
+
+  return (
+    <div>
       {books.length > 0 && hasSearched ? (
-        <div className={'container'}>
+        <div>
           <InfiniteScroll
             style={{
               backgroundColor: '#F0F0F0',
@@ -107,31 +145,41 @@ const Home = () => {
               return books
             }}
           >
-            {loading ? (
-              <Loading />
-            ) : (
-              books.map((item) => (
-                <Card
-                  key={item.etag}
-                  authors={item.volumeInfo.authors}
-                  title={item.volumeInfo.title}
-                  published_at={item.volumeInfo.publishedDate}
-                  description={item.volumeInfo.description}
-                  pageCount={item.volumeInfo.pageCount}
-                  rating={item.volumeInfo.averageRating}
-                  subject={item.volumeInfo.categories}
-                  thumbnail={item.volumeInfo.imageLinks.thumbnail}
-                />
-              ))
-            )}
+            {headerAndSearch()}
+            <br />
+            <div className={'container'}>
+              {loading ? (
+                <Loading />
+              ) : (
+                books.map((item) => (
+                  <Card
+                    key={item.etag}
+                    authors={item.volumeInfo.authors}
+                    title={item.volumeInfo.title}
+                    published_at={item.volumeInfo.publishedDate}
+                    description={item.volumeInfo.description}
+                    pageCount={item.volumeInfo.pageCount}
+                    rating={item.volumeInfo.averageRating}
+                    subject={item.volumeInfo.categories}
+                    thumbnail={item.volumeInfo.imageLinks.thumbnail}
+                  />
+                ))
+              )}
+            </div>
           </InfiniteScroll>
         </div>
       ) : hasSearched ? (
-        <div style={{ textAlign: 'center', marginTop: '5%', fontSize: '20px' }}>
-          There are no books that match your search!!
+        <div>
+          {headerAndSearch()}
+          <br />
+          <div
+            style={{ textAlign: 'center', marginTop: '5%', fontSize: '20px' }}
+          >
+            There are no books that match your search!!
+          </div>
         </div>
       ) : (
-        <div></div>
+        <div>{headerAndSearch()}</div>
       )}
     </div>
   )
