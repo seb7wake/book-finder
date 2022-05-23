@@ -1,0 +1,32 @@
+.book-container {
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 5%;
+  display: flex;
+}
+
+.book-details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 4%;
+}
+
+.book-details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 4%;
+}
+
+.img-loading {
+  background-color: grey;
+}
+
+.img-loaded {
+  width: 220px; /* width of image (px or % or auto) */
+  height: auto;
+}
+
+.book-cover {
+  width: 220px;
+  height: auto;
+}

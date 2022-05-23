@@ -1,31 +1,45 @@
 import React from 'react'
+import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 const Card = (props) => {
-  {
-    /* <div>{props.title}</div>
-<div>{props.authors}</div>
-<div>{props.rating}</div>
-<div>{props.published_at}</div>
-<div>{props.description}</div>
-<div>{props.pageCount}</div>
-<div>{props.rating}</div>
-<div>{props.subject}</div>
-<div>{props.thumbnail}</div> */
-  }
+  const link = props.id
+  const description = props.description
+    ? props.description.replace(/(.{330})..+/, '$1…')
+    : ''
   return (
     <div className="card-wrapper">
       <div className="card-info">
-        <div className="image-wrapper">
-          <img src={props.thumbnail} />
-        </div>
+        <Link to={link}>
+          <div className="image-wrapper">
+            <img src={props.thumbnail} />
+          </div>
+        </Link>
         <div className="book-info">
-          <label className="book-title">{props.title}</label>
-          <label className="authors">{props.authors}</label>
-          <p>{props.description}</p>
-          {props.rating && <p>{props.rating}/5</p>}
-          {props.published_at && (
-            <p>Year: {props.published_at.substring(0, 4)}</p>
-          )}
+          <Link to={link}>
+            <label className="book-title">
+              <strong>{props.title}</strong>
+            </label>
+          </Link>
+          <label
+            className="authors"
+            value={props.authors}
+            onClick={(e) => props.selectAuthor(e.target.innerText)}
+          >
+            {props.authors}
+          </label>
+          <p className="description">{description}</p>
+          <div className="card-details">
+            {props.subject && <div>Category: {props.subject[0] + '    '}</div>}
+            {props.rating && (
+              <div>
+                Rating: {props.rating}/5 {'    '}
+              </div>
+            )}
+            {props.published_at && (
+              <div>Year: {props.published_at.substring(0, 4) + '    '}</div>
+            )}
+            {props.pageCount && <div>Pages: {props.pageCount}</div>}
+          </div>
         </div>
       </div>
       <style></style>

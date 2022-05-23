@@ -59,10 +59,29 @@ input:-webkit-autofill:active {
   padding: 1%;
   border: 1px solid black;
   border-bottom-style: none;
+  background-color: white;
 }
 
 .card-info {
   display: flex;
+  min-width: 400px;
+}
+
+.book-title {
+  text-decoration: underline;
+}
+
+.loading {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  margin-top: 100px;
+  align-items: top;
+  justify-content: center;
+}
+
+.description {
+  margin-bottom: 5%;
 }
 
 .image-wrapper {
@@ -71,14 +90,34 @@ input:-webkit-autofill:active {
 }
 
 .book-title {
+  color: black;
 }
 
 .authors {
+  margin-top: 10px;
+  color: rgb(76, 169, 201);
+  font-style: italic;
+}
+
+.card-details {
+  display: flex;
+  align-items: right;
+  justify-content: flex-end;
+  position: absolute;
+  bottom: 5%;
+  right: 0;
+}
+
+.card-details > * {
+  display: inline;
+  margin-right: 40px;
 }
 
 .book-info {
   display: flex;
   flex-direction: column;
+  margin-left: 1%;
+  position: relative;
 }
 
 #filter {

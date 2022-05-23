@@ -19,6 +19,7 @@ const Home = () => {
   // }, [])
 
   const findBooks = async () => {
+    // Adjust to handle possible errors
     console.log('here')
     setLoading(true)
     let newSearch = document.getElementById('search-bar').value
@@ -46,6 +47,7 @@ const Home = () => {
     const res = await fetch(url)
     const data = await res.json()
     if (data.totalItems > 0) {
+      setBooks([])
       setBooks(data.items)
     } else {
       setBooks([])
@@ -53,6 +55,35 @@ const Home = () => {
     console.log(data.items)
     setLoading(false)
     setHasSearched(true)
+    console.log(document.getElementById('search-bar').value)
+  }
+
+  const findAuthor = async (author) => {
+    window.scrollTo(0, 0)
+    console.log(author)
+    setLoading(true)
+    setSearch(author)
+    let url =
+      'https://www.googleapis.com/books/v1/volumes?q=' +
+      author.replace(' ', '+') +
+      '&orderBy=' +
+      order +
+      '&printType=books' +
+      '&startIndex=0' +
+      '&filter=' +
+      filter
+    console.log(url)
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.totalItems > 0) {
+      setBooks([])
+      setBooks(data.items)
+    } else {
+      setBooks([])
+    }
+    console.log(data.items)
+    setLoading(false)
+    document.getElementById('search-bar').value = author
   }
 
   const loadMoreBooks = async () => {
@@ -97,6 +128,7 @@ const Home = () => {
               id="search-bar"
               placeholder="Search using book titles, authors, and more..."
               type="text"
+              onKeyDown={(e) => e.key === 'Enter' && findBooks()}
             />
             <input
               type="button"
@@ -153,8 +185,11 @@ const Home = () => {
               ) : (
                 books.map((item) => (
                   <Card
-                    key={item.etag}
-                    authors={item.volumeInfo.authors}
+                    key={item.id}
+                    id={item.id}
+                    authors={
+                      item.volumeInfo.authors ? item.volumeInfo.authors[0] : ''
+                    }
                     title={item.volumeInfo.title}
                     published_at={item.volumeInfo.publishedDate}
                     description={item.volumeInfo.description}
@@ -162,6 +197,7 @@ const Home = () => {
                     rating={item.volumeInfo.averageRating}
                     subject={item.volumeInfo.categories}
                     thumbnail={item.volumeInfo.imageLinks.thumbnail}
+                    selectAuthor={findAuthor}
                   />
                 ))
               )}
