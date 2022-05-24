@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Loading from '../components/Loading'
 import Card from '../components/Card'
 import '../styles.css'
 
-const Home = () => {
+const Home = (props) => {
+  const param = useLocation().search
+  const location = useLocation()
+  const navigate = useNavigate()
   const [hasSearched, setHasSearched] = React.useState(false)
   const [books, setBooks] = React.useState([])
   const [start, setStart] = React.useState(0)
@@ -14,9 +18,15 @@ const Home = () => {
   const [search, setSearch] = React.useState('')
   // https://www.googleapis.com/books/v1/volumes?q=inauthor:daniel+keyes+intitle:flowers+subject:&orderBy=newest&printType=books&startIndex=0
 
-  // React.useEffect(() => {
-  //   findBooks()
-  // }, [])
+  useEffect(() => {
+    console.log(props)
+    const keyword = new URLSearchParams(param).get('keyword')
+    if (keyword) {
+      console.log(keyword)
+      findBooks()
+      document.getElementById('search-bar').value = keyword
+    }
+  }, [location])
 
   const findBooks = async () => {
     // Adjust to handle possible errors
@@ -76,7 +86,7 @@ const Home = () => {
     const res = await fetch(url)
     const data = await res.json()
     if (data.totalItems > 0) {
-      setBooks([])
+      // setBooks([])
       setBooks(data.items)
     } else {
       setBooks([])
@@ -115,6 +125,12 @@ const Home = () => {
     }
   }
 
+  // use this to update query params after user searches something different
+  const changeSearch = (value) => {
+    document.getElementById('search-bar').value = value
+    navigate('/search?keyword=' + value)
+  }
+
   const headerAndSearch = () => {
     return (
       <div>
@@ -128,12 +144,16 @@ const Home = () => {
               id="search-bar"
               placeholder="Search using book titles, authors, and more..."
               type="text"
-              onKeyDown={(e) => e.key === 'Enter' && findBooks()}
+              onKeyDown={(e) =>
+                e.key === 'Enter' && changeSearch(e.target.value)
+              }
             />
             <input
               type="button"
               id="search-btn"
-              onClick={findBooks}
+              onClick={(e) =>
+                changeSearch(document.getElementById('search-bar').value)
+              }
               value="Search"
             />
             <br />
@@ -185,7 +205,7 @@ const Home = () => {
               ) : (
                 books.map((item) => (
                   <Card
-                    key={item.id}
+                    key={item.etag}
                     id={item.id}
                     authors={
                       item.volumeInfo.authors ? item.volumeInfo.authors[0] : ''
@@ -197,7 +217,7 @@ const Home = () => {
                     rating={item.volumeInfo.averageRating}
                     subject={item.volumeInfo.categories}
                     thumbnail={item.volumeInfo.imageLinks.thumbnail}
-                    selectAuthor={findAuthor}
+                    selectAuthor={changeSearch}
                   />
                 ))
               )}

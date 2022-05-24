@@ -31,6 +31,7 @@ const Book = (props) => {
       setImgLoading(true)
       setData(data)
       setImgLoading(false)
+      console.log(data)
     } else {
       setData()
     }
@@ -53,14 +54,25 @@ const Book = (props) => {
               />
             </div>
             <div className="book-details">
-              <label>{data.volumeInfo.title}</label>
+              <label style={{ fontSize: '32px' }}>
+                {data.volumeInfo.title}
+              </label>
+              <br />
               <label>
                 {data.volumeInfo.authors ? (
-                  <a>{data.volumeInfo.authors[0]}</a>
+                  <Link
+                    to={
+                      '/search?keyword=' +
+                      data.volumeInfo.authors[0].replace(' ', '+')
+                    }
+                  >
+                    <div className="authors">{data.volumeInfo.authors[0]}</div>
+                  </Link>
                 ) : (
                   <div>Unknown author</div>
                 )}
               </label>
+              <br />
               <table>
                 <tbody>
                   <tr>

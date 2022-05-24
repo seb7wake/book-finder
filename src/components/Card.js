@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 const Card = (props) => {
-  const link = props.id
+  const link = '/book/' + props.id
   const description = props.description
     ? props.description.replace(/(.{330})..+/, '$1…')
     : ''
@@ -20,13 +20,17 @@ const Card = (props) => {
               <strong>{props.title}</strong>
             </label>
           </Link>
-          <label
-            className="authors"
-            value={props.authors}
-            onClick={(e) => props.selectAuthor(e.target.innerText)}
-          >
-            {props.authors}
-          </label>
+          {props.authors ? (
+            <label
+              className="authors"
+              value={props.authors}
+              onClick={(e) => props.selectAuthor(e.target.innerText)}
+            >
+              {props.authors}
+            </label>
+          ) : (
+            <label>Unknown author</label>
+          )}
           <p className="description">{description}</p>
           <div className="card-details">
             {props.subject && <div>Category: {props.subject[0] + '    '}</div>}
