@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Loading from '../components/Loading'
+import Search from '../components/Search'
 import Card from '../components/Card'
 import '../styles.css'
 
 const Home = (props) => {
-  const param = useLocation().search
   const location = useLocation()
   const navigate = useNavigate()
   const [hasSearched, setHasSearched] = React.useState(false)
@@ -19,17 +19,17 @@ const Home = (props) => {
   // https://www.googleapis.com/books/v1/volumes?q=inauthor:daniel+keyes+intitle:flowers+subject:&orderBy=newest&printType=books&startIndex=0
 
   useEffect(() => {
-    console.log(props)
-    const keyword = new URLSearchParams(param).get('keyword')
+    const keyword = new URLSearchParams(location.search).get('keyword')
     if (keyword) {
       console.log(keyword)
-      findBooks()
       document.getElementById('search-bar').value = keyword
+      findBooks()
     }
   }, [location])
 
   const findBooks = async () => {
     // Adjust to handle possible errors
+    window.scrollTo(0, 0)
     console.log('here')
     setLoading(true)
     let newSearch = document.getElementById('search-bar').value
@@ -57,7 +57,7 @@ const Home = (props) => {
     const res = await fetch(url)
     const data = await res.json()
     if (data.totalItems > 0) {
-      setBooks([])
+      // setBooks([])
       setBooks(data.items)
     } else {
       setBooks([])
@@ -65,7 +65,6 @@ const Home = (props) => {
     console.log(data.items)
     setLoading(false)
     setHasSearched(true)
-    console.log(document.getElementById('search-bar').value)
   }
 
   const findAuthor = async (author) => {
@@ -86,7 +85,6 @@ const Home = (props) => {
     const res = await fetch(url)
     const data = await res.json()
     if (data.totalItems > 0) {
-      // setBooks([])
       setBooks(data.items)
     } else {
       setBooks([])
@@ -119,70 +117,46 @@ const Home = (props) => {
     setBooks(newBooks)
   }
 
-  const update = () => {
+  const displayBooks = () => {
+    return loading ? (
+      <Loading />
+    ) : (
+      books.map((item) => (
+        <Card
+          key={item.etag}
+          id={item.id}
+          authors={item.volumeInfo.authors ? item.volumeInfo.authors[0] : ''}
+          title={item.volumeInfo.title}
+          published_at={item.volumeInfo.publishedDate}
+          description={item.volumeInfo.description}
+          pageCount={item.volumeInfo.pageCount}
+          rating={item.volumeInfo.averageRating}
+          subject={item.volumeInfo.categories}
+          thumbnail={item.volumeInfo.imageLinks?.thumbnail}
+          selectAuthor={changeSearch}
+        />
+      ))
+    )
+  }
+
+  const updateFilters = () => {
     if (books.length > 0) {
       findBooks()
     }
   }
 
-  // use this to update query params after user searches something different
   const changeSearch = (value) => {
     document.getElementById('search-bar').value = value
     navigate('/search?keyword=' + value)
   }
 
-  const headerAndSearch = () => {
-    return (
-      <div>
-        <header>
-          <div className="title">Book Finder</div>
-          <div className="subtitle">Created using the Google Books API</div>
-        </header>
-        <div className="form">
-          <div className="query-fields">
-            <input
-              id="search-bar"
-              placeholder="Search using book titles, authors, and more..."
-              type="text"
-              onKeyDown={(e) =>
-                e.key === 'Enter' && changeSearch(e.target.value)
-              }
-            />
-            <input
-              type="button"
-              id="search-btn"
-              onClick={(e) =>
-                changeSearch(document.getElementById('search-bar').value)
-              }
-              value="Search"
-            />
-            <br />
-            <div className="filters">
-              <select id="sort" onChange={update}>
-                <option value="relevance"> Relevance </option>
-                <option value="newest"> Newest</option>
-              </select>
-              <select id="filter" onChange={update}>
-                <option value="ebooks"> All ebooks </option>
-                <option value="free-ebooks"> Free ebooks</option>
-                <option value="paid-ebooks"> Paid ebooks</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div>
-      {books.length > 0 && hasSearched ? (
+      {books.length > 0 ? (
         <div>
           <InfiniteScroll
             style={{
               backgroundColor: '#F0F0F0',
-              paddingLeft: '25px',
-              paddingRight: '25px',
             }}
             dataLength={books.length} //This is important field to render the next data
             next={loadMoreBooks}
@@ -197,36 +171,14 @@ const Home = (props) => {
               return books
             }}
           >
-            {headerAndSearch()}
+            <Search changeSearch={changeSearch} updateFilters={updateFilters} />
             <br />
-            <div className={'container'}>
-              {loading ? (
-                <Loading />
-              ) : (
-                books.map((item) => (
-                  <Card
-                    key={item.etag}
-                    id={item.id}
-                    authors={
-                      item.volumeInfo.authors ? item.volumeInfo.authors[0] : ''
-                    }
-                    title={item.volumeInfo.title}
-                    published_at={item.volumeInfo.publishedDate}
-                    description={item.volumeInfo.description}
-                    pageCount={item.volumeInfo.pageCount}
-                    rating={item.volumeInfo.averageRating}
-                    subject={item.volumeInfo.categories}
-                    thumbnail={item.volumeInfo.imageLinks.thumbnail}
-                    selectAuthor={changeSearch}
-                  />
-                ))
-              )}
-            </div>
+            <div className={'container'}>{displayBooks()}</div>
           </InfiniteScroll>
         </div>
       ) : hasSearched ? (
         <div>
-          {headerAndSearch()}
+          <Search changeSearch={changeSearch} updateFilters={updateFilters} />
           <br />
           <div
             style={{ textAlign: 'center', marginTop: '5%', fontSize: '20px' }}
@@ -235,7 +187,9 @@ const Home = (props) => {
           </div>
         </div>
       ) : (
-        <div>{headerAndSearch()}</div>
+        <div>
+          <Search changeSearch={changeSearch} updateFilters={updateFilters} />
+        </div>
       )}
     </div>
   )

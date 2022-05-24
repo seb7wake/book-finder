@@ -47,7 +47,7 @@ const Book = (props) => {
           <div className="book-container">
             <div className="book-cover">
               <img
-                src={data.volumeInfo.imageLinks.small}
+                src={data.volumeInfo.imageLinks.thumbnail}
                 alt="Book Preview"
                 className={'img-loaded'}
                 onLoad={() => setImgLoading(false)}
@@ -69,7 +69,7 @@ const Book = (props) => {
                     <div className="authors">{data.volumeInfo.authors[0]}</div>
                   </Link>
                 ) : (
-                  <div>Unknown author</div>
+                  <div className="authors">Unknown author</div>
                 )}
               </label>
               <br />

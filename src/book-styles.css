@@ -22,11 +22,15 @@
 }
 
 .img-loaded {
-  width: 220px; /* width of image (px or % or auto) */
+  width: 175px; /* width of image (px or % or auto) */
   height: auto;
 }
 
 .book-cover {
   width: 220px;
   height: auto;
+}
+
+a {
+  text-decoration: none;
 }

@@ -11,7 +11,14 @@ const Card = (props) => {
       <div className="card-info">
         <Link to={link}>
           <div className="image-wrapper">
-            <img src={props.thumbnail} />
+            {props.thumbnail ? (
+              <img src={props?.thumbnail} />
+            ) : (
+              <img
+                src="http://books.google.com/books/publisher/content?id=n0YoEAAAQBAJ&printsec=frontcover&img=1&zoom=2&edge=curl&imgtk=AFLRE73oK6G_D1zdwuV9NHnjCWk5bfWGfOIbaBKzAow0C_wKbZQB42gFl5vODpWC6qeHySKJDTYfCAIwESPn0C7y2fmgqscAOxjNB8zZBh7V3SqNns4VOP0MAMepxnsxgz1sSwvRYrpQ&source=gbs_api"
+                style={{ width: '128px', height: '204px' }}
+              />
+            )}
           </div>
         </Link>
         <div className="book-info">
