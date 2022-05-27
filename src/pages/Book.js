@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-// import { Markup } from 'interweave'
 import {
   BrowserRouter as Router,
   Switch,
@@ -66,12 +65,37 @@ const Book = (props) => {
                       data.volumeInfo.authors[0].replace(' ', '+')
                     }
                   >
-                    <div className="authors">{data.volumeInfo.authors[0]}</div>
+                    <div
+                      style={{
+                        color: 'rgb(76, 169, 201)',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      {data.volumeInfo.authors[0]}
+                    </div>
                   </Link>
                 ) : (
                   <div className="authors">Unknown author</div>
                 )}
               </label>
+              {data.volumeInfo.ratingsCount && (
+                <div>
+                  <br />
+                  <label>Rating: {data.volumeInfo.ratingsCount}/5</label>
+                </div>
+              )}
+              {data.volumeInfo.categories && (
+                <div>
+                  <br />
+                  <label>Categories: {data.volumeInfo.categories}</label>
+                </div>
+              )}
+              {data.volumeInfo.pageCount && (
+                <div>
+                  <br />
+                  <label>Pages: {data.volumeInfo.pageCount}</label>
+                </div>
+              )}
               <br />
               <table>
                 <tbody>
